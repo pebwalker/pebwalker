@@ -5,6 +5,11 @@ body {
   color: #c7bf91;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 a {
   color: #e19b2a;
   text-decoration: none;
@@ -86,7 +91,6 @@ table {
   border-collapse: collapse;
   border: 1px solid #e19b2a;
   width: 100%;
-  font-size: 1rem; /* keep table text consistent with body */
 }
 
 th, td {
@@ -123,7 +127,7 @@ hr {
   }
   th, td {
     white-space: nowrap;
-    font-size: 1rem;         /* prevent mobile upscaling */
+    font-size: 0.95rem;      /* align with surrounding body text on mobile */
   }
   header h1 {
     text-align: center;
