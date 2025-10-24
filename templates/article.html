@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} — [ pebwalker ]{% endblock title %}
+
+{% block content %}
+<article class="single">
+
+  <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+    {% if page.extra.image %}
+      <img src="/{{ page.extra.image | safe }}"
+           alt="cover for {{ page.title }}"
+           style="width: 80px; height: 80px; object-fit: cover;
+                  border-radius: 6px; flex-shrink: 0;">
+    {% endif %}
+
+    <div>
+      <h2 style="font-size: 2rem; margin: 0; color: #fabd2f;">
+        {{ page.title }}
+      </h2>
+
+      {% if page.extra.logline %}
+        <p style="margin: 0.4rem 0 0; font-size: 1rem; color: #d5c4a1;">
+          {{ page.extra.logline }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {{ page.content | safe }}
+</article>
+{% endblock content %}
+
