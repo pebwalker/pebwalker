@@ -83,8 +83,24 @@ pre, code {
   max-width: 100%;
 }
 
-.single img:not([style]) {
+/* Center standalone Markdown images wrapped in their own paragraph */
+.single p > img:only-child {
+  display: block;
+  margin: 1rem auto;
+}
+
+figure.figure {
   margin: 1.5rem 0;
+  text-align: center;
+}
+figure.figure img {
+  max-width: 100%;
+  margin: 0; /* avoid extra gap before caption inside figures */
+}
+figure.figure figcaption {
+  font-size: 0.9rem;
+  color: #a89984;
+  margin-top: 0.3rem;
 }
 
 table {

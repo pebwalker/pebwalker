@@ -41,6 +41,7 @@ Admitting you ran a cheat invites ridicule or bans, so victims rarely ask for he
 Finding the sample started with a simple YouTube search for recent Roblox cheats. Sorting by Upload date, I clicked a video posted a couple of hours earlier advertising the capabilities of a new cheat loader.
 
 ![Youtube search](/images/youtube-roblox.png)
+{% figure() %}Youtube search results{% end %}
 
 
 The video included troubleshooting tips (`if it doesn't work, try disabling antivirus` or `run as administrator`), priming users to expect security warnings and ignore them. This is not surprising, even for "real" cheats, as some techniques they often use are flagged by antivirus, but it leads to something analogous to alert fatigue where users get used to turning protections off.
@@ -53,6 +54,7 @@ The description of the video linked to a relatively decent-looking AI-generated 
 
 
 ![Distributor's website](/images/lumma-distributor.png)
+{% figure() %}The distributor's website{% end %}
 
 ---
 
@@ -64,6 +66,7 @@ It is also harder to analyze the content when we can't trace it back to the sour
 
 
 ![Mediafire](/images/lumma-mediafire.png)
+{% figure() %}Sample is hosted on a third party website{% end %}
 
 ---
 
@@ -77,6 +80,7 @@ Running the sample in `ANY.RUN` confirmed my suspicion: it was flagged as Lumma 
 
 
 ![ANY.RUN results](/images/lumma-anyrun.png)
+{% figure() %}ANY.RUN identifies the sample as Lumma{% end %}
 
 
 The process tree showed something unusual: the malicious payload ran under `MSBuild.exe`, a "living off the land" binary (LOLBin).
@@ -112,6 +116,7 @@ The content of the function is always a tiny loop that performs simple byte subs
 
 
 ![Lumma Unscrambler](/images/lumma-unscrambler.png)
+{% figure() %}A typical unscrambling routine{% end %}
 
 
 As the unscrambling functions always return the address of the decoded data in eax and don't use any input other than the value to decode, it is possible to add a breakpoint at the return to automatically dump the decoded data during dynamic analysis.
@@ -345,6 +350,7 @@ If this check fails, the victim receives a not-so-stealthy pop-up asking them if
 
 
 ![Lumma Warning](/images/lumma-warning.png)
+{% figure() %}Pop up triggered by the detection of the unencrypted sample on disk{% end %}
 
 
 If all these conditions are true, the malware can continue its execution.
@@ -772,15 +778,16 @@ There will always be joy in the hunt.
 | Type    | Value |
 |---------|-------|
 | SHA256  | c3452e0484d1985280565c5f8827e798f4623cf7b05ce624b394303376b108a2 |
-| C2		| mocadia[.]com/iuew |
-| C2		| mastwin[.]in/qsaz |
-| C2		| precisionbiomeds[.]com/ikg |
-| C2		| physicianusepeptides[.]com/opu |
-| C2		| vishneviyjazz[.]ru/neco |
-| C2		| yrokistorii[.]ru/uqya |
-| C2		| xurekodip[.]com/qpdl |
-| C2		| utvp1[.]net/zkaj |
-| C2		| orienderi[.]com/xori |
+| C2      | mocadia[.]com/iuew |
+| C2      | mastwin[.]in/qsaz |
+| C2      | precisionbiomeds[.]com/ikg |
+| C2      | physicianusepeptides[.]com/opu |
+| C2      | vishneviyjazz[.]ru/neco |
+| C2      | yrokistorii[.]ru/uqya |
+| C2      | xurekodip[.]com/qpdl |
+| C2      | utvp1[.]net/zkaj |
+| C2      | orienderi[.]com/xori |
+
 
 ---
 

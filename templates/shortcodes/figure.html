@@ -1,0 +1,12 @@
+<figure class="figure">
+  {% if src is defined and src %}
+    <img src="/{{ src | safe }}" alt="{{ alt | default(value="") }}">
+  {% endif %}
+  {% if body is defined and body | length > 0 %}
+    <figcaption>{{ body | safe }}</figcaption>
+  {% elif caption is defined and caption %}
+    <figcaption>{{ caption | safe }}</figcaption>
+  {% endif %}
+</figure>
+
+
