@@ -29,8 +29,6 @@ While one can't deny the existence of a thriving underground cheat market where 
 
 Free cheats create the perfect expectations. Unofficial software breaks often and triggers antivirus, so users are primed to ignore warnings and "try again". Cheat distributors even coach them to disable protections or run as administrator. If a loader launches and nothing visible happens, most simply assume it failed and move on, often after credentials are already on their way out.
 
-Admitting you ran a cheat invites ridicule or bans, so victims rarely ask for help. Many targets are kids on shared family machines, where one bad click can compromise more than a game account.
-
 ---
 
 
