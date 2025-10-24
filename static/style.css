@@ -86,6 +86,7 @@ table {
   border-collapse: collapse;
   border: 1px solid #e19b2a;
   width: 100%;
+  font-size: 1rem; /* keep table text consistent with body */
 }
 
 th, td {
@@ -118,11 +119,11 @@ hr {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border: 0;               /* remove fixed outer border to avoid phantom column */
-    width: max-content;      /* let table expand to content width */
-    min-width: 100%;         /* but never smaller than container */
+    width: 100%;             /* keep within container; content scrolls */
   }
   th, td {
     white-space: nowrap;
+    font-size: 1rem;         /* prevent mobile upscaling */
   }
   header h1 {
     text-align: center;
