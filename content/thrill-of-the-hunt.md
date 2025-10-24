@@ -54,6 +54,7 @@ The description of the video linked to a relatively decent-looking AI-generated 
 
 ![Distributor's website](/images/lumma-distributor.png)
 
+---
 
 ### Sample Download
 

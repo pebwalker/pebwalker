@@ -45,6 +45,7 @@ pre {
   overflow-x: auto;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
+  margin-bottom: 2rem;
 }
 
 code {
@@ -69,6 +70,10 @@ pre, code {
   max-width: 100%;
 }
 
+.single img:not([style]) {
+  margin: 1.5rem 0;
+}
+
 table {
   border-collapse: collapse;
   border: 1px solid #e19b2a;
@@ -91,5 +96,35 @@ blockquote {
   padding: 0.75rem 1rem;
   margin: 1.5rem 0;
   color: #c7bf91;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #3c3836;
+  margin: 2rem 0;
+}
+
+@media (max-width: 700px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 0;               /* remove fixed outer border to avoid phantom column */
+    width: max-content;      /* let table expand to content width */
+    min-width: 100%;         /* but never smaller than container */
+  }
+  th, td {
+    white-space: nowrap;
+  }
+  .home-card {
+    flex-direction: column;
+    align-items: center !important;
+    text-align: center;
+  }
+  .home-card img {
+    width: 85% !important;
+    height: auto !important;
+    max-width: 340px;
+  }
 }
 

@@ -4,7 +4,7 @@
 
 {% block content %}
   {% for page in section.pages | sort(attribute="date") | reverse %}
-    <article style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem;">
+    <article class="home-card" style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem;">
       {% if page.extra.image %}
         <a href="{{ page.permalink }}">
           <img src="{{ page.extra.image | safe }}"
