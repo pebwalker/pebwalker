@@ -113,7 +113,7 @@ The content of the function is always a tiny loop that performs simple byte subs
 ![Lumma Unscrambler](/images/lumma-unscrambler.png)
 
 
-As the unscrambling functions always return the address of the decoded data in eax and don't use any input other than the value to decode, it is therefore simple to add a breakpoint at the return to automatically dump the decoded data during dynamic analysis.
+As the unscrambling functions always return the address of the decoded data in eax and don't use any input other than the value to decode, it is possible to add a breakpoint at the return to automatically dump the decoded data during dynamic analysis.
 
 ---
 
@@ -240,7 +240,7 @@ KnownDLLs are loader-managed shared sections that expose baseline DLL images, wh
 
 ## Execution Conditions
 
-After the initialization of the syscall table, the malware enters a series of validations that establish conditions for the execution:
+Following the initialization of the syscall table, the malware enters a series of validations that establish conditions for the execution:
 
 1. Anti-sandbox DLL validation
 2. Language validation
@@ -441,7 +441,7 @@ The sample also contained a fallback C2 that is dynamically obtained from a Stea
 
 With the list of C2 domains now decrypted, the malware can establish a connection over HTTPS.
 
-To analyze the network traffic, I created a python flask API to impersonate a C2. I added a DNS entry on the VM and a root certificate for easy HTTPS communication.
+To analyze the network traffic, I created a python flask API to impersonate a C2, then added a DNS entry and root certificate on the VM for easy HTTPS communication.
 
 ---
 
