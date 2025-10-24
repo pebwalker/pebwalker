@@ -42,6 +42,9 @@ article h2 {
 
 pre {
   padding: 0.4rem;
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 code {
@@ -50,6 +53,7 @@ code {
 
 pre code {
   padding: 0px;
+  white-space: pre;
 }
 
 code, pre {
