@@ -175,7 +175,7 @@ push    ntdll_module
 call    mw_syscall_table_init_from_ntdll
 ```
 
-It then proceeds to perform PE sanity checks: various offsets are compared against obfuscated constants. These constants are the DOS magic MZ (`0x5A4D`) and PE (`0x00004550`):
+The sample then performs PE sanity checks: various offsets are compared against obfuscated constants. These constants are the DOS magic MZ (`0x5A4D`) and PE (`0x00004550`):
 
 ```C
   mz_magic_ntdll = *ntdll_ptr;
