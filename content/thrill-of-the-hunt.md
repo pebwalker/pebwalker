@@ -167,7 +167,9 @@ Their names are obfuscated, but placing a breakpoint on the decode functions' re
 - `ntdll.dll`
 - `USER32.DLL`
 
-The syscall table is created by parsing `ntdll.dll` and extracting the syscall numbers it uses. As these values vary from one Windows build to another, they can't be hardcoded without absolute knowledge of the target.
+The syscall table is created by parsing `ntdll.dll` and extracting the syscall numbers it uses.
+
+>Syscall numbers vary from one Windows build to another. They can't be hardcoded without absolute knowledge of the target.
 
 The function responsible for the syscall table creation is called, and receives a pointer to the base of ntdll:
 
@@ -181,7 +183,7 @@ push    ntdll_module
 call    mw_syscall_table_init_from_ntdll
 ```
 
-The sample then performs PE sanity checks: various offsets are compared against obfuscated constants. These constants are the DOS magic MZ (`0x5A4D`) and PE (`0x00004550`):
+The sample then performs PE sanity checks on ntdll: offsets are compared against obfuscated constants. These constants are the DOS magic MZ (`0x5A4D`) and PE (`0x00004550`):
 
 ```C
   mz_magic_ntdll = *ntdll_ptr;
@@ -199,7 +201,7 @@ The sample then performs PE sanity checks: various offsets are compared against 
       switch ( pe_signature_ntdll != *pe_magic )
 ```
 
-Then it finds the export directory:
+The export directory table is located:
 
 ```C
 export_dir_rva = *(DWORD*)((char*)ntdll_ptr + pe_header_offset + 120);
@@ -214,7 +216,7 @@ addr_of_ordinals  = base + *(DWORD*)(base + export_dir_rva + 36); // AddressOfNa
 addr_of_functions = base + *(DWORD*)(base + export_dir_rva + 28); // AddressOfFunctions
 ```
 
-It loops over the exported names, and computes their hash and index if it fits the following conditions:
+Finally, it loops over the found exported names. Each function has their hash computed and their index parsed as long as it fits the following conditions:
 
 1. The function name starts with `Nt`
 
@@ -229,8 +231,7 @@ switch ( *export_name_ushort != 'tN' )
   - `0xC3`: ret
   - `0xC2`: ret imm16
 
-
-If the conditions are true, the sample will update or append to the syscall table.
+The result is a dynamically built table that can be used in direct syscall invocation.
 
 ---
 
