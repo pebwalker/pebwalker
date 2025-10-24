@@ -13,6 +13,14 @@ a:hover {
   text-decoration: underline;
 }
 
+.home-card-link {
+  display: block;
+  color: inherit;
+}
+.home-card-link:hover {
+  text-decoration: none;
+}
+
 header {
   background-color: #171916;
   padding: 1rem;
@@ -115,6 +123,12 @@ hr {
   }
   th, td {
     white-space: nowrap;
+  }
+  header h1 {
+    text-align: center;
+  }
+  header p {
+    display: none;
   }
   .home-card {
     flex-direction: column;

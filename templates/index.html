@@ -4,19 +4,19 @@
 
 {% block content %}
   {% for page in section.pages | sort(attribute="date") | reverse %}
-    <article class="home-card" style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem;">
-      {% if page.extra.image %}
-        <a href="{{ page.permalink }}">
+    <a class="home-card-link" href="{{ page.permalink }}">
+      <article class="home-card" style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem;">
+        {% if page.extra.image %}
           <img src="{{ page.extra.image | safe }}"
                alt="cover for {{ page.title }}"
                style="width: 200px; height: 200px; object-fit: cover; border-radius: 6px; flex-shrink: 0;">
-        </a>
-      {% endif %}
-      <div>
-        <h2 style="margin-top: 0;"><a href="{{ page.permalink }}">{{ page.title }}</a></h2>
-        <p>{{ page.description | safe }}</p>
-      </div>
-    </article>
+        {% endif %}
+        <div>
+          <h2 class="card-title" style="margin-top: 0;">{{ page.title }}</h2>
+          <p>{{ page.description | safe }}</p>
+        </div>
+      </article>
+    </a>
   {% endfor %}
 {% endblock content %}
 
