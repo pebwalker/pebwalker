@@ -217,11 +217,6 @@ addr_of_functions = base + *(DWORD*)(base + export_dir_rva + 28); // AddressOfFu
 Finally, it loops over the found exported names. Each function has their hash computed and their index parsed as long as it fits the following conditions:
 
 1. The function name starts with `Nt`
-
-```C
-switch ( *export_name_ushort != 'tN' )
-```
-
 2. The function contains these bytes within the first 0x20 bytes of the function:
 
 - `0xB8`: mov eax, imm32 → the syscall number follows.
