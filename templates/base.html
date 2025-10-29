@@ -3,6 +3,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}[ pebwalker ]{% endblock title %}</title>
+    {% if page and page.description %}
+    <meta name="description" content="{{ page.description | safe }}">
+    {% else %}
+    <meta name="description" content="{{ config.description | safe }}">
+    {% endif %}
     {% if page %}
     <link rel="canonical" href="{{ page.permalink | safe }}">
     {% elif section %}
