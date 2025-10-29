@@ -9,6 +9,7 @@ build_search_index = false
 
 title = "pebwalker"
 description = "Weekend projects in reverse engineering, firmware, and security"
+generate_sitemap = true
 
 # Markdown rendering configuration
 [markdown]

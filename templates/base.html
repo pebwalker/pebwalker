@@ -3,6 +3,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}[ pebwalker ]{% endblock title %}</title>
+    {% if page %}
+    <link rel="canonical" href="{{ page.permalink | safe }}">
+    {% elif section %}
+    <link rel="canonical" href="{{ section.permalink | safe }}">
+    {% else %}
+    <link rel="canonical" href="{{ config.base_url | safe }}">
+    {% endif %}
     <link rel="stylesheet" href="/style.css">
     <link rel="icon" type="image/png" href="/favicon.png">
   </head>
