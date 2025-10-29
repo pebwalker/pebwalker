@@ -8,7 +8,7 @@ compile_sass = false
 build_search_index = false
 
 title = "pebwalker"
-description = "Weekend projects in reverse engineering, firmware, and security"
+description = "Weekend projects | Reverse engineering, firmware security, and low-level notes"
 generate_sitemap = true
 
 # Markdown rendering configuration
