@@ -25,7 +25,7 @@ There is joy in the hunt.
 
 In many gaming communities, rank is status. When that status feels at risk, some players look for shortcuts.
 
-While one can't deny the existence of a thriving underground cheat market where players and streamers spend hundreds of dollars for exclusive unpatched cheats in competitive games, this article focuses on a different world: one of free cheats advertised on YouTube and link aggregators, packaged as easy tutorials like "NEW Working Cheat Undetected 2025" and propped up by comment walls of fake validation.
+While one can't deny the existence of a thriving underground cheat market where players and streamers spend hundreds of dollars for exclusive cheats in competitive games, this article focuses on a different world: one of free cheats advertised on YouTube and link aggregators, packaged as easy tutorials like "NEW Working Cheat Undetected 2025" and propped up by comment walls of fake validation.
 
 Free cheats create the perfect expectations. Unofficial software breaks often and triggers antivirus, so users are primed to ignore warnings and "try again". Cheat distributors even coach them to disable protections or run as administrator. If a loader launches and nothing visible happens, most simply assume it failed and move on, often after credentials are already on their way out.
 
@@ -457,9 +457,9 @@ The client sends its data as `multipart/form-data` parts of type `application/oc
 The strings found in the JSON configuration are all encrypted using a simple process.
 
 1. If utf-8, the string is converted to utf-16
-2. A random 8 bytes key is generated 
+2. A random 8-byte key is generated 
 3. The utf-16 string is XOR encrypted using the key generated on step 2
-4. The 8 bytes key is appended at the beginning of the encryption result
+4. The 8-byte key is appended at the beginning of the encryption result
 5. The result from step 4 is base64 encoded
 
 This translates roughly to the following operation:
@@ -730,6 +730,18 @@ With the analysis completed, the next step was to hunt for similar samples to ex
 To do that, I created a YARA rule based on Lumma's ChaCha20 implementation and its key setup: 
 
 ```
+rule Lumma_ChaCha20_KeyStub_v2
+{
+  meta:
+    author = "pebwalker"
+    description = "Detects Lumma Stealer ChaCha20 key setup and stub"
+    date = "2025-08-09"
+    yarahub_uuid = "1a967f26-a3c0-4fd0-b6cf-fae4731c60ed"
+    yarahub_license = "CC0 1.0"
+    yarahub_rule_matching_tlp = "TLP:WHITE"
+    yarahub_rule_sharing_tlp  = "TLP:WHITE"
+    yarahub_reference_md5 = "0a0b4a3c4eb53ae6cd5c769de784eb8b"
+
   strings:
     // Copy 32B key, then 8B nonce
     $copy_stub = {
@@ -749,6 +761,14 @@ To do that, I created a YARA rule based on Lumma's ChaCha20 implementation and i
       [0-16]
       F3 66 A5                  // rep movsw
     }
+
+  condition:
+    uint16(0) == 0x5A4D and
+    uint32(uint32(0x3C)) == 0x00004550 and
+    uint16(uint32(0x3C) + 4) == 0x014C and
+    filesize < 50MB and
+    $copy_stub and $chacha_core_short
+}
 ```
 
 I then [published it on YARAify](https://yaraify.abuse.ch/yarahub/rule/Lumma_ChaCha20_KeyStub_v2/) for hunting and community use.
