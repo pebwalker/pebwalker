@@ -994,4 +994,6 @@ I statically cracked seven layers of protection, extracted every embedded compon
 
 The AV detections are likely false positives, triggered by a perfect storm of heuristic indicators that individually raise suspicion but, when traced back to the code, have a benign explanation.
 
+Part of me is disappointed: I went in hoping to find a niche malware sample hiding inside a teen movie game, and all I got was a Flash wrapper with too many protection layers. But I am glad that the abandonware preservation scene, for all its rough edges, has enough integrity to not weaponize nostalgia.
+
 Even so, always take precautions. Run unknown binaries in a virtual machine, and don't trust random bloggers.
