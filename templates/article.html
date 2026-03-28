@@ -26,6 +26,19 @@
     </div>
   </div>
 
+  {% if page.toc %}
+  <nav class="toc">
+    <details open>
+      <summary>Table of contents</summary>
+      <ul>
+        {% for h2 in page.toc %}
+          <li><a href="{{ h2.permalink }}">{{ h2.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </details>
+  </nav>
+  {% endif %}
+
   {{ page.content | safe }}
 </article>
 {% endblock content %}
