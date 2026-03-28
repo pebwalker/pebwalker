@@ -761,7 +761,7 @@ Static analysis of the native code only covers the C/C++ shell. The actual game 
 
 The extracted `Assets/` directory contains 73 SWF files across characters, cutscene movies, and particle effects. As a first pass, I wrote a tag-level scanner that decompresses each SWF, walks the binary tag stream, and checks for known attack patterns: PE/ELF headers in `DefineBinaryData` tags, x86 NOP sleds and shellcode prologues, malformed `DefineBitsJPEG3` alpha offsets (CVE-2013-0634 and similar), and suspicious ActionScript API references in `DoABC2` bytecode. It flagged nothing: 73/73 clean, zero `DefineBinaryData` tags across the entire set.
 
-But heuristic scanning is pattern matching, not comprehension. Obfuscated ActionScript, custom-encoded payloads, or novel exploit techniques would sail right through. To actually understand what this code does, I need to read it.
+But heuristic scanning can only catch what it already knows to look for. Obfuscated ActionScript, custom-encoded payloads, or novel exploit techniques would sail right through. To actually understand what this code does, I need to read it.
 
 ### Parsing the ABC constant pools
 
