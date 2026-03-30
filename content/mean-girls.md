@@ -898,7 +898,7 @@ Every finding maps directly to code already analyzed in this article:
 | Obfuscated Files or Information | T1027 | The LCG-based XOR decryption loop at `0x5A0C7C` using constants `0x19660D` / `0x3C6EF375` to decrypt the import table |
 | Command and Scripting Interpreter | T1059 | Flash Player's ActionScript Virtual Machine (AVM2), initialized by SWF Studio to execute `.swf` game content |
 | Shared Modules | T1129 | MoleBox's dynamic loading of `MBX@*.###` runtime DLLs from `%APPDATA%\.#` via `LoadLibraryA` |
-| Hide Artifacts | T1564 | The launcher's `ShowWindow(result, 0)` creating a hidden watchdog window, and MoleBox's hidden `.#` temp directory with `FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM` |
+| Hide Artifacts | T1564 | The launcher's `ShowWindow(result, 0)` creating a hidden watchdog window, and MoleBox's hidden `.#` temp directory with `FILE_ATTRIBUTE_HIDDEN \| FILE_ATTRIBUTE_SYSTEM` |
 | System Information Discovery | E1082 | `GetVersionExA` in the launcher's CRT startup code (see below) |
 | Create Process | C0017 | `CreateProcessW(L"Meangirls.dat")` in the launcher's `wWinMain` |
 | Terminate Process | C0018 | `TerminateProcess(hHandle, 0)` in the launcher's window procedure on `WM_CLOSE` / `WM_DESTROY` |
