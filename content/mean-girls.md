@@ -11,7 +11,7 @@ logline = "Stop trying to make malware happen. It's not going to happen."
 
 ## Introduction
 
-**Mean Girls: High School Showdown** is a 2009 puzzle game based on the classic teen comedy. It was developed by Legacy Interactive and published by Paramount Digital Entertainment. Like many casual games from that era, it was built on Adobe Flash, wrapped in a native Windows executable using SWF Studio.
+**Mean Girls: High School Showdown** is a 2009 top-down RPG based on the classic teen comedy. It was developed by Ladyluck Digital Media and Legacy Interactive, and published by Paramount Digital Entertainment. Like many casual games from that era, it was built on Adobe Flash, wrapped in a native Windows executable using SWF Studio.
 
 I love the movie Mean Girls. The game, on the other hand, looked plain bad even by 2009 casual game standards. I had no intention of playing it. So why download it?
 
@@ -62,7 +62,7 @@ The section name gives it away: [kkrunchy](http://www.farbrausch.de/~fg/kkrunchy
 </assembly>
 ```
 
-THETA SFX is Farbrausch's self-extracting archive tool, built on top of kkrunchy. So the installer is not just packed, it's a self-extracting archive.
+THETA SFX is a self-extracting archive tool built on top of the kkrunchy packer. So the installer is not just packed, it's a self-extracting archive.
 
 ### What's inside
 
@@ -100,12 +100,12 @@ Assets/         ~80 MB   SWF game content (characters, movies, sounds, etc.)
 
 ### Decompiling the packer stub
 
-The entry point at `0x3DE792` is a standard kkrunchy LZMA decompression routine. Decompiling it in IDA gives us the full picture:
+The entry point at `0x3DE792` is the standard kkrunchy decompression stub. Decompiling it in IDA gives us the full picture:
 
 ```c
 HMODULE *start()
 {
-  // ... LZMA decompression into loc_3EE1EC ...
+  // ... kkrunchy decompression into loc_3EE1EC ...
 
   v16 = byte_3EE545;  // encoded import table
   while ( 1 )
@@ -145,7 +145,7 @@ The packer stub does nothing beyond decompression and import resolution. There i
 
 ### The uninstaller
 
-`Uninstall.exe` (38 KB, PE timestamp February 8, 2008) uses the same kkrunchy packer as the installer: single PE section named `kkrunchy`, two-import IAT (`LoadLibraryA`, `GetProcAddress`), LZMA decompression stub. Its embedded XML manifest identifies it as `THETA.DU.Manifest` (THETA Dynamic Uninstaller), the companion to the THETA SFX installer.
+`Uninstall.exe` (38 KB, PE timestamp February 8, 2008) uses the same kkrunchy packer as the installer: single PE section named `kkrunchy`, two-import IAT (`LoadLibraryA`, `GetProcAddress`), kkrunchy decompression stub. Its embedded XML manifest identifies it as `THETA.DU.Manifest` (THETA Dynamic Uninstaller), the companion to the THETA SFX installer.
 
 The 17 KB overlay begins with the `DEADBEEF` magic number and `NullsoftInst` identifier, confirming it contains an [NSIS](https://nsis.sourceforge.io/) (Nullsoft Scriptable Install System) uninstall script. NSIS is an open-source, widely-used installer framework. The embedded script data is NSIS-compressed and handles standard file deletion: removing the extracted game files and the installation directory. There is no registry manipulation, no networking, and no persistence beyond what NSIS provides for standard uninstallation.
 
@@ -160,7 +160,7 @@ A string search reveals two interesting things:
 - `svchostmngrlslnchr` at `0x40513C`
 - `e:\svn\Mean Girls Launcher\Release\Clueless.pdb` at `0x405E18`
 
-The PDB path tells us the project was originally named "Clueless" (another teen movie), developed in SVN, and compiled in Release mode. Legacy Interactive published several casual games based on movie licenses, so this is likely a generic launcher template reused across titles.
+The PDB path tells us the project was originally named "Clueless" (another teen movie), developed in SVN, and compiled in Release mode. Legacy Interactive made several casual games based on TV and movie licenses, so this is likely a generic launcher template reused across titles.
 
 ### Decompilation
 
@@ -273,7 +273,7 @@ Tracing cross-references to their IAT entries in IDA shows **zero xrefs**: no co
 
 ### The dynamic imports
 
-The real import table is hidden. The entry point function `sub_5A0C10` decrypts an entire PE section using a linear congruential generator. Here is the XOR loop in assembly:
+The real import table is hidden. The entry point function `sub_5A0C10` (the entry point `0x5A1353` lies within it) decrypts an entire PE section using a linear congruential generator. Here is the XOR loop in assembly:
 
 ```nasm
 loc_5A0C7C:
@@ -424,12 +424,12 @@ The metadata uses forward IDEA (encrypt subkeys on ciphertext). Sections and ove
 
 ### The overlay
 
-The overlay (27.1 MB at file offset 0xBF000) contains all embedded files packaged by MoleBox: the Flash Player DLL (`player.BOX`), two MoleBox helper executables, and the application icon. The bulk is the Flash Player DLL, IDEA-encrypted and zlib-compressed. The overlay header describes the chunking:
+The overlay (27.1 MB at file offset 0xBF000) has three regions. At the front is the MoleBox-packaged Flash Player DLL (`player.BOX`): about 1.6 MB of IDEA-encrypted, zlib-compressed chunks that inflate to the ~3 MB DLL. Near the tail are two MoleBox helper executables and the application icon, stored as unencrypted zlib streams. Between them sits the bulk of the overlay, roughly 25 MB: SWF Studio's attached-files container, which holds the game's own content under its own encryption. That scheme is separate from MoleBox and resisted every static attack I threw at it; I open it later, [under a debugger](#inside-the-encrypted-container). The overlay header describes the `player.BOX` chunking:
 
 ```
 [0x00]  2,886,950     Total decompressed size
 [0x04]  41            TOC entry count
-[0x08]  41 DWORDs     TOC (entries 0-1: final chunk sizes,
+[0x08]  41 DWORDs     TOC (entries 0-1: trailing chunk sizes,
                            entries 2-5: 16-byte IDEA key hash,
                            entries 6-40: 35 main chunk sizes)
 [0xAC]  11 DWORDs     Continuation chunk sizes
@@ -454,15 +454,15 @@ My initial approach, applying IDEA ECB as one continuous stream across the entir
 
 With per-chunk IDEA and the TOC-defined chunk boundaries, the first 35 entries (TOC indices 6-40) immediately decoded. But 35 chunks only covered the `.text` section. The remaining PE sections were missing.
 
-Tracing the call sites of `sub_5A5170` (IDEA decrypt) in the bootstrap confirmed there is **no key rotation**: all three callers use the same key (`[metadata+0x2C]+0x20`). The issue was not cryptographic but structural: the overlay splits `player.BOX` into three sequential groups:
+Tracing the call sites of `sub_5A5170` (IDEA decrypt) in the bootstrap confirmed there is **no key rotation**: all three callers use the same key (`[metadata+0x2C]+0x20`). The issue was not cryptographic but structural. `player.BOX` is split across two chunk groups, followed by a third group that turns out not to belong to the DLL:
 
 ```
 Group 1:  35 main chunks        TOC entries 6-40      1,260,425 bytes compressed
 Group 2:  11 continuation chunks   DWORDs at 0xAC       330,033 bytes compressed
-Group 3:   2 final chunks       TOC entries 0-1         24,801 bytes compressed
+Group 3:   2 trailing chunks    TOC entries 0-1         24,801 bytes compressed
 ```
 
-Applying per-chunk IDEA ECB decryption followed by zlib decompression across these three groups reconstructs the **complete** Flash Player DLL:
+Per-chunk IDEA ECB decryption followed by zlib decompression across Groups 1 and 2 (**46 chunks**) reconstructs the **complete** Flash Player DLL. Group 3's two chunks decrypt to non-zlib data; they are not part of `player.BOX` but the leading bytes of the ~25 MB attached-files container that fills the rest of the overlay. The 46 chunks yield:
 
 ```
 flash_player.dll  2,991,890 bytes  Adobe Flash Player 9.0.124.0
@@ -716,7 +716,7 @@ RegSetValueA("ProxyStubClsid32", "{00020420-0000-0000-C000-000000000046}")
 
 > **COM registration** writes GUID-to-DLL mappings into the Windows registry so the OS can locate and instantiate COM components. Any application embedding an ActiveX control, like Flash Player, needs to register the control's interfaces before using it. These registry writes are routine plumbing, not persistence.
 
-The first GUID is the Shockwave Flash Object. The second is the standard IDispatch proxy stub. This registration happens under `HKEY_CURRENT_USER`, not `HKLM`, so it doesn't require elevation. This is completely standard behavior for any application embedding Flash Player as an ActiveX control.
+The first GUID is the Flash control's `_IShockwaveFlashEvents` interface (registered under `Interface\`; the `Shockwave Flash Object` coclass itself is the sibling GUID ending `…6E`). The second is the standard OLE Automation (IDispatch) proxy stub, set as that interface's `ProxyStubClsid32`. This registration happens under `HKEY_CURRENT_USER`, not `HKLM`, so it doesn't require elevation. This is completely standard behavior for any application embedding Flash Player as an ActiveX control.
 
 ---
 
@@ -886,6 +886,55 @@ In context, these are all standard SWF Studio v3 patterns: `allowDomain("*")` is
 
 ---
 
+## Inside the encrypted container
+
+One region of `MeanGirls.dat` refused to open under static analysis: the ~25 MB encrypted container that makes up most of the overlay. This is the game's own content, embedded in the runtime and separate from the loose `Assets/` files. None of the MoleBox keys decrypt it, and the data is flat, high-entropy noise with no usable structure. To get inside, I stopped reading the binary and started running it.
+
+I loaded `MeanGirls.dat` into IDA and drove it under a remote Windows debugger in a VM. The plan was to let the runtime decrypt its own content and lift the plaintext out of memory as it appeared.
+
+SWF Studio stages attached files through temporary files on their way to the Flash player, so a logging breakpoint on `kernel32!WriteFile` is enough to watch them go by. The decrypted files dropped straight out:
+
+```
+WriteFile  len=3055    43 57 53 09 ...   (bootstrap SWF, CWS v9)
+WriteFile  len=143245  00 00 01 00 ...   (application icon, ICO)
+```
+
+Both come out as valid, recognizable files, lifted straight from memory as the engine wrote them: a CWS Flash movie and a Windows icon. The decryption works, and what it produces is plain game content.
+
+### The engine
+
+Those `WriteFile` calls returned into a DLL the runtime had unpacked to `%APPDATA%\.#` and loaded at `0x10000000`. Its export name is `utility.dll`: SWF Studio's native engine. Walking back up the call stack, the file-extraction routine makes two `thiscall`s right before it writes:
+
+- `0x10009510`, which receives the file's name and its length
+- `0x1000a500`, which receives a source buffer, a destination, and a length
+
+`0x10009510` copies an 18-entry P-array and four 256-entry S-boxes from fixed tables and runs them through a key schedule. The tables are the fractional digits of pi:
+
+```
+P-array:  243f6a88 85a308d3 13198a2e 03707344 ...
+S-box 0:  d1310ba6 98dfb5ac 2ffd72db d01adfb7 ...
+```
+
+That is **Blowfish**. `0x1000a500` is the **CBC** driver: it reads 8-byte blocks big-endian, runs each through the Blowfish round function at `0x10009a00`, and XOR-chains with the previous block. The IV is zero.
+
+The key was the part I did not expect. `0x10009510` keys Blowfish with the **file's own name**, and inside the container those names are 110-character hex strings:
+
+```
+1BBF0E91A4614501A44688CF8A7101783D513AB25A99D31344388E4EE25343CD3 ...
+```
+
+clamped to Blowfish's 56-byte maximum. Every file is therefore encrypted under a different key, each one a name that the container keeps encrypted in its own directory.
+
+### Pinning it down
+
+A lookalike cipher is easy to misidentify, so I did not want to take the pi constants on faith. I set a breakpoint that let the engine finish its key schedule, then read the **expanded Blowfish context straight out of the running process** (the engine keeps it as a stack local) and reimplemented Blowfish with those exact subkeys. They reproduce, to the byte, the key schedule that standard Blowfish derives from `filename[:56]`. Cipher, mode, IV, and key are all confirmed against the live process, not inferred.
+
+Getting that far meant going around the wrapper's own defenses. `utility.dll` is one of the `MAntiHack` components: it self-checksums and silently restores any software breakpoint planted in its own code, so a breakpoint on the decrypt routine never fires. The way through is to never touch `utility.dll` at all. Reach the decrypt through a `kernel32` breakpoint, then recover the Blowfish context by reading it out of the extraction routine's stack frame at a fixed offset from the file-name pointer.
+
+So the last and most alarming region of the binary, 25 MB of solid entropy that looks exactly like a concealed encrypted payload, is the game. Every attached file is Blowfish-CBC encrypted under its own name, and the bytes that come out are ordinary SWFs and assets.
+
+---
+
 ## VirusTotal sandbox report
 
 VirusTotal runs submitted files in multiple sandboxes (CAPA, CAPE, Cuckoo, Jujubox, Zenbox) and aggregates the observed behaviors into MITRE ATT&CK mappings and Malware Behavior Catalog (MBC) tags. The [report for MeanGirls.exe](https://www.virustotal.com/gui/file/e29d5621142e020e31b88c8cb594608840433e0bc3453c0e98914d371c4ae419/behavior) flags several behavioral indicators. Since the sandbox runs `MeanGirls.exe`, which spawns `MeanGirls.dat` as a child process, the report captures behavior from both binaries.
@@ -899,7 +948,7 @@ Every finding maps directly to code already analyzed in this article:
 | Command and Scripting Interpreter | T1059 | Flash Player's ActionScript Virtual Machine (AVM2), initialized by SWF Studio to execute `.swf` game content |
 | Shared Modules | T1129 | MoleBox's dynamic loading of `MBX@*.###` runtime DLLs from `%APPDATA%\.#` via `LoadLibraryA` |
 | Hide Artifacts | T1564 | The launcher's `ShowWindow(result, 0)` creating a hidden watchdog window, and MoleBox's hidden `.#` temp directory with `FILE_ATTRIBUTE_HIDDEN \| FILE_ATTRIBUTE_SYSTEM` |
-| System Information Discovery | E1082 | `GetVersionExA` in the launcher's CRT startup code (see below) |
+| System Information Discovery | T1082 | `GetVersionExA` in the launcher's CRT startup code (see below) |
 | Create Process | C0017 | `CreateProcessW(L"Meangirls.dat")` in the launcher's `wWinMain` |
 | Terminate Process | C0018 | `TerminateProcess(hHandle, 0)` in the launcher's window procedure on `WM_CLOSE` / `WM_DESTROY` |
 | Writes File | C0052 | MoleBox extracting runtime DLLs to `%APPDATA%\.#\MBX@{PID}@{ADDR}.###` |
@@ -907,7 +956,7 @@ Every finding maps directly to code already analyzed in this article:
 
 ### System Information Discovery
 
-The sandbox flags the binary for querying host information (MITRE E1082). This comes from the MSVC C Runtime startup code, not from the application itself. The launcher's `start` function at `0x401482` contains the standard CRT initialization sequence:
+The sandbox flags the binary for querying host information (MITRE T1082). This comes from the MSVC C Runtime startup code, not from the application itself. The launcher's `start` function at `0x401482` contains the standard CRT initialization sequence:
 
 ```c
 // MSVC CRT startup (compiler-generated, not application code)
@@ -938,7 +987,7 @@ There is no plausible scenario where 183K unrelated files all independently conn
 From double-clicking the installer to gameplay:
 
 1. **Installer unpacks.**
-   - `Mean Girls.exe` (kkrunchy/THETA SFX) decompresses via LZMA
+   - `Mean Girls.exe` (kkrunchy/THETA SFX) decompresses its kkrunchy-packed stub
    - Extracts a RAR4 archive containing:
      - The launcher
      - The game runtime
@@ -990,7 +1039,7 @@ From double-clicking the installer to gameplay:
 
 The `Mean Girls: High School Showdown` repack is not malware. It is a legitimate Flash game from 2009, built with SWF Studio v3 on MoleBox v2, repacked by a warez site using kkrunchy, and distributed through abandonware channels.
 
-I statically cracked seven layers of protection, extracted every embedded component, decoded all 1,176 VB6 p-code methods into readable mnemonics, and parsed every ActionScript constant pool across 73 SWF files. Every file, every section, every byte has been accounted for.
+I statically cracked seven layers of protection, extracted the Flash Player runtime and the MoleBox helper components, decoded all 1,176 VB6 p-code methods into readable mnemonics, parsed every ActionScript constant pool across the 73 SWF files in `Assets/`, and decrypted the embedded game container. Every component has been traced, and every byte that looked like a hidden payload turned out to be the game.
 
 The AV detections are likely false positives, triggered by a perfect storm of heuristic indicators that individually raise suspicion but, when traced back to the code, have a benign explanation.
 
