@@ -563,6 +563,8 @@ if (context->cinfo.output_width > (JDIMENSION)state->xsize ||
 
 `output_width * output_components` is exactly what libjpeg writes per scanline; `state->bytes` is exactly what the buffer holds. For every legitimate mode the two are equal, so the guard never fires on a valid image. Only the mismatched `JCS_UNKNOWN` case, four components into a two-byte buffer, trips it, and the crafted file turns into a clean `OSError` instead of a shell. It is the check that should have sat between the two layers from the start.
 
+The vulnerability was assigned [GHSA-5x8w-8jj5-q52h](https://github.com/python-pillow/Pillow/security/advisories/GHSA-5x8w-8jj5-q52h), CVE pending.
+
 ---
 
 ## Good, but it needs a dependency
@@ -709,8 +711,8 @@ It was the second time this audit that someone reached a bug ahead of me. The `m
 - **May 2026.** Audited Pillow's native decoding stack and found all three bugs
 - **June 4, 2026.** Disclosed the FlashPix overflow to the maintainers
 - **June 5, 2026.** A first tentative patch went up for review
-- **July 7, 2026.** The out-of-bounds read I used for the ASLR leak was disclosed as [CVE-2026-54058](https://github.com/advisories/GHSA-62p4-gmf7-7g93), already fixed in Pillow 12.3.0 the week before.
+- **July 7, 2026.** The OOB read I used for the ASLR leak was disclosed as [CVE-2026-54058](https://github.com/advisories/GHSA-62p4-gmf7-7g93), already fixed in Pillow 12.3.0 the week before.
 - **September 18, 2026.** The maintainers asked me to review a reworked FlashPix fix
 - **September 19, 2026.** Fix approved
 - **September 19, 2026.** Reported the multi-frame `seek()` overflow (duplicate)
-- **October 16, 2026.** Both fixes shipped in Pillow 13.0.0
+- **October 16, 2026.** Both fixes ([FPX](https://github.com/python-pillow/Pillow/security/advisories/GHSA-5x8w-8jj5-q52h) and [seek](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6)) shipped in Pillow 13.0.0
