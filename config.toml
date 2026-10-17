@@ -12,11 +12,9 @@ description = "Weekend projects | Reverse engineering, firmware security, and lo
 generate_sitemap = true
 
 # Markdown rendering configuration
-[markdown]
-highlight_code = true
-highlight_theme = "Gruvbox-N"
-extra_syntaxes_and_themes = ["syntax-themes"]
+[markdown.highlighting]
+theme = "gruvbox-n"
+extra_themes = ["syntax-themes/gruvbox-n.json"]
 
 [extra]
 # Put all your custom variables here
-

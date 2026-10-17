@@ -1,0 +1,6 @@
+{% component figure(src="", alt="", caption="") %}
+<figure class="figure">
+  {% if src %}<img src="/{{ src | safe }}" alt="{{ alt }}">{% endif %}
+  {% if body %}<figcaption>{{ body | safe }}</figcaption>{% elif caption %}<figcaption>{{ caption | safe }}</figcaption>{% endif %}
+</figure>
+{% endcomponent figure %}

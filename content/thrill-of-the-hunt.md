@@ -39,7 +39,7 @@ Free cheats create the perfect expectations. Unofficial software breaks often an
 Finding the sample started with a simple YouTube search for recent Roblox cheats. Sorting by Upload date, I clicked a video posted a couple of hours earlier advertising the capabilities of a new cheat loader.
 
 ![Youtube search](/images/youtube-roblox.png)
-{% figure() %}Youtube search results{% end %}
+{% <figure> %}Youtube search results{% </figure> %}
 
 
 The video included troubleshooting tips (`if it doesn't work, try disabling antivirus` or `run as administrator`), priming users to expect security warnings and ignore them. This is not surprising, even for "real" cheats, as some techniques they often use are flagged by antivirus, but it leads to something analogous to alert fatigue where users get used to turning protections off.
@@ -52,7 +52,7 @@ The description of the video linked to a relatively decent-looking AI-generated 
 
 
 ![Distributor's website](/images/lumma-distributor.png)
-{% figure() %}The distributor's website{% end %}
+{% <figure> %}The distributor's website{% </figure> %}
 
 ---
 
@@ -64,7 +64,7 @@ It is also harder to analyze the content when we can't trace it back to the sour
 
 
 ![Mediafire](/images/lumma-mediafire.png)
-{% figure() %}Sample is hosted on a third party website{% end %}
+{% <figure> %}Sample is hosted on a third party website{% </figure> %}
 
 ---
 
@@ -78,7 +78,7 @@ Running the sample in `ANY.RUN` confirmed my suspicion: it was flagged as Lumma 
 
 
 ![ANY.RUN results](/images/lumma-anyrun.png)
-{% figure() %}ANY.RUN identifies the sample as Lumma{% end %}
+{% <figure> %}ANY.RUN identifies the sample as Lumma{% </figure> %}
 
 
 The process tree showed something unusual: the malicious payload ran under `MSBuild.exe`, a "living off the land" binary (LOLBin).
@@ -114,7 +114,7 @@ The content of the function is always a tiny loop that performs simple byte subs
 
 
 ![Lumma Unscrambler](/images/lumma-unscrambler.png)
-{% figure() %}A typical unscrambling routine{% end %}
+{% <figure> %}A typical unscrambling routine{% </figure> %}
 
 
 As the unscrambling functions always return the address of the decoded data in eax and don't use any input other than the value to decode, it is possible to add a breakpoint at the return to automatically dump the decoded data during dynamic analysis.
@@ -342,7 +342,7 @@ If this check fails, the victim receives a not-so-stealthy pop-up asking them if
 
 
 ![Lumma Warning](/images/lumma-warning.png)
-{% figure() %}Pop up triggered by the detection of the unencrypted sample on disk{% end %}
+{% <figure> %}Pop up triggered by the detection of the unencrypted sample on disk{% </figure> %}
 
 
 If all these conditions are true, the malware can continue its execution.

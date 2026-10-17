@@ -16,7 +16,7 @@ logline = "A look into insecure 'encryption' used in enterprise QA tooling"
 To hide these sensitive strings, users are provided with an encoder that transforms passwords into a series of hexadecimal characters. Looking at the documentation on the official website, I was surprised to see the following warning:
 
 ![Warning](/images/uftone-warning.png)
-{% figure() %}A security warning in the official documentation{% end %}
+{% <figure> %}A security warning in the official documentation{% </figure> %}
 
 Even with a clear warning that the tool is not meant to be secure, some users are doomed to treat encoding as encryption. After receiving a tipoff that these sensitive strings often show up in public GitHub repositories, I decided to take a closer look.
 
@@ -44,7 +44,7 @@ If our goal was to decode a single string, this could be the end of the project.
 I loaded the DLL into IDA and looked at the exports:
 
 ![Exports](/images/uftone-exports.png)
-{% figure() %}The DLL's exported functions{% end %}
+{% <figure> %}The DLL's exported functions{% </figure> %}
 
 Having the procedure referenced as encoding in some places and encryption in others usually means we're dealing with flawed encryption.
 
@@ -157,7 +157,7 @@ int __fastcall xor_cipher(char char_to_encrypt, unsigned int *key)
 The function's xrefs show that the cipher is called by both the encryption and decryption routine, hinting that the process is fully reversible and using exactly the same transformation:
 
 ![XOR xrefs](/images/uftone-xrefs.png)
-{% figure() %}The function's xrefs{% end %}
+{% <figure> %}The function's xrefs{% </figure> %}
 
 We now have enough information to reimplement the cryptographic model, but I'm still curious about one detail: every time we encrypt a string, the result is different. That would be an expected behaviour if the key was randomly generated every time, but the first bytes of the keys I generate are always really similar. Before ending the research phase, I'd like to analyze the predictability of the key.
 
