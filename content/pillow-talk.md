@@ -494,7 +494,7 @@ offset 130016: "id\0..."     <- obj+0, becomes rdi, the string system() runs
 offset 130024: &fake_type    <- ob_type, drives the vtable walk to 0x4206c0
 ```
 
-The inline argument is short, bounded by where `ob_type` sits a few bytes later, so the command is capped at seven bytes. `id` is two of them, and `uid=0(root)` is all the proof a writeup needs.
+The inline argument is short, bounded by where `ob_type` sits a few bytes later, so the command is capped at seven bytes. `id` is two of them, and `uid=0(root)` is all the proof I need.
 
 ---
 
