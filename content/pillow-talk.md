@@ -563,7 +563,7 @@ if (context->cinfo.output_width > (JDIMENSION)state->xsize ||
 
 `output_width * output_components` is exactly what libjpeg writes per scanline; `state->bytes` is exactly what the buffer holds. For every legitimate mode the two are equal, so the guard never fires on a valid image. Only the mismatched `JCS_UNKNOWN` case, four components into a two-byte buffer, trips it, and the crafted file turns into a clean `OSError` instead of a shell. It is the check that should have sat between the two layers from the start.
 
-The vulnerability was assigned [GHSA-5x8w-8jj5-q52h](https://github.com/python-pillow/Pillow/security/advisories/GHSA-5x8w-8jj5-q52h), CVE pending.
+The vulnerability was assigned [CVE-2026-112398](https://www.cve.org/CVERecord?id=CVE-2026-112398).
 
 ---
 
@@ -700,7 +700,7 @@ The leak is a McIdas file and the overflow is the MPO/CMYK payload, so nothing o
 
 I sat on the seek bug for a while before reporting it. I've filed a lot of disclosures for other projects that were never fixed (not out of any bad faith on the maintainers' side, but because open-source maintainers rarely have the resources to triage and patch everything that lands in their inbox). By the time I submitted the seek bug, it was labeled "Duplicate".
 
-Someone had already reported the same bug privately, and it was fixed in the same release under [`CVE-2026-96639`](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6).
+Someone had already reported the same bug privately, and it was fixed in the same release under [CVE-2026-96639](https://github.com/python-pillow/Pillow/security/advisories/GHSA-v9pv-5gc8-w2m6).
 
 It was the second time this audit that someone reached a bug ahead of me. The `map.c` read behind the ASLR leak had gone the same way: found independently and disclosed as [CVE-2026-54058](https://github.com/advisories/GHSA-62p4-gmf7-7g93) before I would have reported it. Two of the three bugs, found in parallel by other people, in the same window. LLMs are getting good!
 
